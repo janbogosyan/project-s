@@ -6,7 +6,7 @@ const MovieList = (props) => {
         <ul>
             {props.movies.map((movie) =>
                 <Movie
-                    
+                                 
                     title={movie.title}
                     releaseDate={movie.release}
                     openingText={movie.openingText}

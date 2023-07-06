@@ -3,45 +3,29 @@ import { useState } from "react";
 
 import MovieList from "./components/MovieList";
 
-// const dummyMovies = [
-//     {
-//         id: 1,
-//         title: 'Some Dummy Movie',
-//         openingText: 'This is the opening',
-//         releaseDate: '2023-7-7',
-//     },
-//     {
-//         id: 2,
-//         title: 'Some Dummy Movie 2',
-//         openingText: 'This is the opening',
-//         releaseDate: '2022-17-7',
-//     },
-// ]
+
 
 function App() {
 
     const [movies, setMovies] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
-    function fetchMoviesHandler() {
-        fetch('https://swapi.dev/api/films/')
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                const transformedMovies = data.results.map(movieData => {
-                    return {
-                        id: movieData.episode_id,
-                        title: movieData.title,
-                        openingText: movieData.opening_crawl,
-                        releaseDate: movieData.release_date,
-                    };
-                });
-                setMovies(transformedMovies);
-            });
+    async function fetchMoviesHandler() {
+        setIsLoading(true);
+        const response = await fetch('https://swapi.dev/api/films/');
+        const data = await response.json();
+
+        const transformedMovies = data.results.map((movieData) => {
+            return {
+                id: movieData.episode_id,
+                title: movieData.title,
+                openingText: movieData.opening_crawl,
+                releaseDate: movieData.release_date,
+            };
+        });
+        setMovies(transformedMovies);
+        setIsLoading(false);
     }
-
-
-
 
     return (
         <Fragment>
@@ -49,7 +33,9 @@ function App() {
                 <button onClick={fetchMoviesHandler}>Fetch Movies</button>
             </section>
             <section>
-                <MovieList movies={movies} />
+                {!isLoading && movies.length > 0 && <MovieList movies={movies} />}
+                {!isLoading && movies.length === 0 && <p>No movies.</p>}
+                {isLoading && <p>Loading...</p>}
             </section>
         </Fragment>
     );
